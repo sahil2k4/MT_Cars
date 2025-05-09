@@ -10,10 +10,10 @@ from sklearn.decomposition import PCA
 
 # Set up Streamlit page configuration
 st.set_page_config(page_title="MTCARS Clustering App", layout="wide")
-st.title("🚗 MTCARS Clustering App (KMeans + PCA)")
+st.title(" MTCARS Clustering App (KMeans + PCA)")
 
 # File uploader
-uploaded_file = st.sidebar.file_uploader("📤 Upload your MTCARS CSV file", type=["csv"])
+uploaded_file = st.sidebar.file_uploader("Upload your MTCARS CSV file", type=["csv"])
 
 @st.cache_data
 def load_data(file):
@@ -60,7 +60,7 @@ if uploaded_file is not None:
     components = pca.fit_transform(X_scaled)
     df['PCA1'], df['PCA2'] = components[:, 0], components[:, 1]
 
-    st.subheader("🌀 PCA Cluster Visualization")
+    st.subheader(" PCA Cluster Visualization")
     fig_pca = px.scatter(
         df, x='PCA1', y='PCA2', color=df['Cluster'].astype(str), hover_data=['Model'],
         title="Clusters visualized with PCA", color_discrete_sequence=px.colors.qualitative.Set2
@@ -68,7 +68,7 @@ if uploaded_file is not None:
     st.plotly_chart(fig_pca)
 
     # Cluster feature averages with rounding to 1 decimal place
-    st.subheader("📊 Cluster Feature Averages")
+    st.subheader("Cluster Feature Averages")
     cluster_summary = df.groupby('Cluster').mean().reset_index()
 
     # Round the values to 1 decimal place
@@ -84,4 +84,4 @@ if uploaded_file is not None:
     st.plotly_chart(fig_summary)
 
 else:
-    st.info("👈 Please upload the `MTCARS.csv` file to begin.")
+    st.info(" Please upload the `MTCARS.csv` file to begin.")
