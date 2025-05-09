@@ -8,6 +8,7 @@ from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 from sklearn.decomposition import PCA
 
+# Set up Streamlit page configuration
 st.set_page_config(page_title="MTCARS Clustering App", layout="wide")
 st.title("🚗 MTCARS Clustering App (KMeans + PCA)")
 
@@ -32,7 +33,7 @@ if uploaded_file is not None:
     # Scale the data
     X_scaled = StandardScaler().fit_transform(df.drop('Model', axis=1))
 
-    # Elbow Method
+    # Elbow Method to determine optimal k
     inertia = []
     k_range = range(1, 15)
     for k in k_range:
@@ -45,7 +46,7 @@ if uploaded_file is not None:
     fig_elbow.update_layout(title="Elbow Method for Choosing k")
     st.plotly_chart(fig_elbow)
 
-    # Cluster selection
+    # Cluster selection slider
     k = st.sidebar.slider("Select number of clusters (k)", 2, 10, 4)
     kmeans = KMeans(n_clusters=k, random_state=42)
     df['Cluster'] = kmeans.fit_predict(X_scaled)
@@ -60,12 +61,14 @@ if uploaded_file is not None:
     df['PCA1'], df['PCA2'] = components[:, 0], components[:, 1]
 
     st.subheader("🌀 PCA Cluster Visualization")
-    fig_pca = px.scatter(df, x='PCA1', y='PCA2', color='Cluster', hover_data=['Model'],
-                         title="Clusters visualized with PCA", color_continuous_scale='Set2')
+    fig_pca = px.scatter(
+        df, x='PCA1', y='PCA2', color=df['Cluster'].astype(str), hover_data=['Model'],
+        title="Clusters visualized with PCA", color_discrete_sequence=px.colors.qualitative.Set2
+    )
     st.plotly_chart(fig_pca)
 
-    # Cluster feature summary
-    st.subheader("📊 Cluster Feature Summary")
+    # Cluster feature averages
+    st.subheader("📊 Cluster Feature Averages")
     cluster_summary = df.groupby('Cluster').mean().reset_index()
 
     fig_summary = ff.create_annotated_heatmap(
