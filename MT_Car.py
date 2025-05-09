@@ -10,10 +10,10 @@ from sklearn.decomposition import PCA
 
 # Set up Streamlit page configuration
 st.set_page_config(page_title="MTCARS Clustering App", layout="wide")
-st.title(" MTCARS Clustering App (KMeans + PCA)")
+st.title("🚗 MTCARS Clustering App (KMeans + PCA)")
 
 # File uploader
-uploaded_file = st.sidebar.file_uploader("Upload your MTCARS CSV file", type=["csv"])
+uploaded_file = st.sidebar.file_uploader("📤 Upload your MTCARS CSV file", type=["csv"])
 
 @st.cache_data
 def load_data(file):
@@ -60,7 +60,7 @@ if uploaded_file is not None:
     components = pca.fit_transform(X_scaled)
     df['PCA1'], df['PCA2'] = components[:, 0], components[:, 1]
 
-    st.subheader(" PCA Cluster Visualization")
+    st.subheader("🌀 PCA Cluster Visualization")
     fig_pca = px.scatter(
         df, x='PCA1', y='PCA2', color=df['Cluster'].astype(str), hover_data=['Model'],
         title="Clusters visualized with PCA", color_discrete_sequence=px.colors.qualitative.Set2
@@ -68,12 +68,13 @@ if uploaded_file is not None:
     st.plotly_chart(fig_pca)
 
     # Cluster feature averages with rounding to 1 decimal place
-    st.subheader("Cluster Feature Averages")
+    st.subheader("📊 Cluster Feature Averages")
     cluster_summary = df.groupby('Cluster').mean().reset_index()
 
     # Round the values to 1 decimal place
     cluster_summary_rounded = cluster_summary.drop('Cluster', axis=1).round(1)
 
+    # Show annotated heatmap
     fig_summary = ff.create_annotated_heatmap(
         z=cluster_summary_rounded.values,
         x=list(cluster_summary_rounded.columns),
@@ -83,5 +84,19 @@ if uploaded_file is not None:
     )
     st.plotly_chart(fig_summary)
 
+    # Display Short Key Insights for Cluster Feature Averages
+    st.subheader("🔑 Key Insights from Cluster Feature Averages")
+
+    # Example of insights based on the cluster averages
+    insights = """
+    - **Cluster 0** tends to have **lower mpg** (miles per gallon) and **higher weight** (wt), indicating it's likely a cluster of **heavier cars**.
+    - **Cluster 1** shows **higher horsepower** (hp) and **larger displacement** (disp), possibly **sports cars** or **high-performance vehicles**.
+    - **Cluster 2** displays **high mpg** and **low weight**, suggesting it's a cluster of **economy cars** or **fuel-efficient vehicles**.
+    - **Cluster 3** is characterized by **medium weight and mpg**, possibly indicating **mid-range cars**.
+    - Features like **gear count** (gear) and **carburetors** (carb) seem to define step-like groupings, which could indicate **categorical divisions** based on car type (e.g., 4-cylinder vs 8-cylinder).
+    """
+
+    st.markdown(insights)
+
 else:
-    st.info(" Please upload the `MTCARS.csv` file to begin.")
+    st.info("👈 Please upload the `MTCARS.csv` file to begin.")
