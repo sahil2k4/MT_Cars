@@ -46,8 +46,8 @@ if uploaded_file is not None:
     fig_elbow.update_layout(title="Elbow Method for Choosing k")
     st.plotly_chart(fig_elbow)
 
-    # Cluster selection slider
-    k = st.sidebar.slider("Select number of clusters (k)", 2, 10, 4)
+    # Hardcoding k=4 instead of user input (you can choose any k value)
+    k = 4
     kmeans = KMeans(n_clusters=k, random_state=42)
     df['Cluster'] = kmeans.fit_predict(X_scaled)
 
@@ -67,13 +67,16 @@ if uploaded_file is not None:
     )
     st.plotly_chart(fig_pca)
 
-    # Cluster feature averages
+    # Cluster feature averages with rounding to 1 decimal place
     st.subheader("📊 Cluster Feature Averages")
     cluster_summary = df.groupby('Cluster').mean().reset_index()
 
+    # Round the values to 1 decimal place
+    cluster_summary_rounded = cluster_summary.drop('Cluster', axis=1).round(1)
+
     fig_summary = ff.create_annotated_heatmap(
-        z=cluster_summary.drop('Cluster', axis=1).values,
-        x=list(cluster_summary.columns[1:]),
+        z=cluster_summary_rounded.values,
+        x=list(cluster_summary_rounded.columns),
         y=[f"Cluster {i}" for i in cluster_summary['Cluster']],
         colorscale='Viridis',
         showscale=True
@@ -85,3 +88,4 @@ if uploaded_file is not None:
 
 else:
     st.info("👈 Please upload the `MTCARS.csv` file to begin.")
+
