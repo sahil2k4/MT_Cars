@@ -83,9 +83,5 @@ if uploaded_file is not None:
     )
     st.plotly_chart(fig_summary)
 
-    st.subheader("📁 Clustered Dataset Preview")
-    st.dataframe(df)
-
 else:
     st.info("👈 Please upload the `MTCARS.csv` file to begin.")
-
